@@ -1,0 +1,22 @@
+name: CI
+on:
+  push:
+    branches:
+    - main
+    tags-ignore:
+    - "*.*.*"
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        deno: ["v1.x", "canary"]
+        os: [ubuntu-latest, macOS-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: denoland/setup-deno@v1
+      with:
+        deno-version: ${{ matrix.deno }}
+    - uses: actions/checkout@master
+    - name: deno test
+      run: "deno test"
