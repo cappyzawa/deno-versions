@@ -5,7 +5,7 @@ import {
   parseLinkHeader,
 } from "./linkHeader.ts";
 
-import { assertEquals } from "https://deno.land/std@0.104.0/testing/asserts.ts";
+import { assertEquals } from "./dev_deps.ts";
 
 const linkHeader: string =
   '<https://api.github.com/user/9287/repos?page=3&per_page=100>; rel="next", ' +
