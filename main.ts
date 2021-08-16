@@ -17,8 +17,6 @@ await new Command()
       GITHUB_REPO,
     );
 
-    for (const r of releases) {
-      console.log(r.tag_name);
-    }
+    releases.map((r) => console.log(r.tag_name));
   })
   .parse(Deno.args);

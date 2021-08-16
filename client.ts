@@ -27,13 +27,11 @@ export class GitHub implements Client {
 
   async get(res: Response, releases: Releases): Promise<Releases> {
     const data: Releases = await res.json();
-    for (const r of data) {
-      releases.push(r);
-    }
+    data.map((r) => releases.push(r));
     const linkHeader = res.headers.get("link")!;
     const links: LinkHeader[] = parseLinkHeader(linkHeader);
 
-    for (const l of links) {
+    await Promise.all(links.map(async (l) => {
       if (l["rel"] == "next") {
         const u: URL = urlParse(l.uri);
         const path = u.pathname.slice(1);
@@ -41,7 +39,7 @@ export class GitHub implements Client {
         const res = await this.httpClient.get(`${path}?${query}`);
         await this.get(res, releases);
       }
-    }
+    }));
     return releases;
   }
 }
