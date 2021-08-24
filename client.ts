@@ -3,25 +3,26 @@ import { LinkHeader, parseLinkHeader } from "./linkHeader.ts";
 
 import { ky, urlParse } from "./deps.ts";
 
-interface Client {
+export class Client {
+  constructor(token: string | undefined, addr?: string) {
+    this.addr = "https://api.github.com";
+    if (addr) {
+      this.addr = addr;
+    }
+    this.httpClient = ky.create({
+      prefixUrl: this.addr,
+      headers: {
+        Authorization: "token " + token,
+      },
+    });
+  }
+
   addr: string;
   httpClient: typeof ky;
 
-  getVersions(owner: string, repo: string): Promise<Releases>;
-}
-
-export class GitHub implements Client {
-  addr = "https://api.github.com";
-  httpClient = ky.create({
-    prefixUrl: this.addr,
-    headers: {
-      Authorization: "token " + Deno.env.get("GITHUB_TOKEN"),
-    },
-  });
-
   async getVersions(owner: string, repo: string): Promise<Releases> {
     const path: string = `repos/${owner}/${repo}/releases`;
-    const res = await this.httpClient.get(path);
+    const res: Response = await this.httpClient.get(path);
     return this.get(res, []);
   }
 
